@@ -13,7 +13,19 @@ SET VERSION_FILE=GIT-VS-VERSION-FILE
 
 :: DEFAULT_VERSION - Version string to be processed when neither Git nor a
 ::                packed version file is available.
-SET DEFAULT_VERSION=v1.0.0-rc0
+
+SET DEFAULT_VERSION=v0.0.0
+
+FOR /F "tokens=1" %%A IN ('"git rev-parse --short HEAD"') DO (
+  SET DEFAULT_VERSION=v0.0.0.%%A
+)
+FOR /F %%A IN ('git diff-index --name-only HEAD --') DO SET tmp=%%A
+IF NOT "%tmp%" == "" (
+  SET DEFAULT_VERSION=%DEFAULT_VERSION%-dirty
+)
+echo %DEFAULT_VERSION%
+
+REM SET DEFAULT_VERSION=v1.0.0-rc0
 
 :: COUNT_PATCHES_FROM - Determines which tag to count the number of patches from
 ::                for the final portion of the digital version number.
@@ -166,7 +178,7 @@ GOTO :EOF
 :: --------------------
 :PARSE_GIT_STRING
 :: --------------------
-FOR /F "tokens=*" %%A IN ('"git describe --tags HEAD"') DO (
+FOR /F "tokens=*" %%A IN ('"git describe --tags --abbrev=7 HEAD"') DO (
   SET strFILE_VERSION=%%A
 )
 :: If HEAD is dirty then this is not part of an official build and even if a
