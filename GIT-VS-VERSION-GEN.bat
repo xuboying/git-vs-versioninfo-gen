@@ -23,7 +23,7 @@ FOR /F %%A IN ('git diff-index --name-only HEAD --') DO SET tmp=%%A
 IF NOT "%tmp%" == "" (
   SET DEFAULT_VERSION=%DEFAULT_VERSION%-dirty
 )
-echo %DEFAULT_VERSION%
+REM echo %DEFAULT_VERSION%
 
 REM SET DEFAULT_VERSION=v1.0.0-rc0
 
